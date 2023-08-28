@@ -45,3 +45,49 @@ sdk = Sdk(name="SDK1", jobs=[job1, job2])
 - `Sdk` 클래스는 `name`, `jobs`, `created_at` 세 가지 속성을 가지고 있습니다. `jobs` 속성은 `Job` 객체의 목록입니다.
 
 이렇게 정의한 클래스를 바탕으로 DDD 방법론을 따라 도메인 로직을 추가하실 수 있습니다.
+
+--------
+
+집합의 특성을 고려할 때, 주요 특성 중 하나는 중복을 허용하지 않는다는 것입니다. 파이썬에서는 `set`이 이러한 특성을 가진 자료구조입니다. 그렇기 때문에 집합을 나타내고자 할 때는 `set`을 사용하는 것이 더 적합합니다.
+
+하지만, `set`을 사용할 때는 다음과 같은 몇 가지 사항을 고려해야 합니다:
+
+1. `set`은 순서를 보장하지 않습니다. 만약 순서가 중요하다면 `set`보다는 `list`를 사용해야 합니다. 그리고 중복을 체크하는 로직을 추가로 구현해야 합니다.
+2. `set`에서 객체의 동일성을 판단하기 위해 객체의 `__hash__`와 `__eq__` 메서드가 사용됩니다. `dataclass`에서 `frozen=True`로 정의된 경우, `__hash__` 메서드가 자동으로 생성되므로 이를 사용할 수 있습니다.
+
+따라서 `Sdk` 클래스의 `jobs`를 `set`으로 정의하기로 결정한다면, 코드는 다음과 같이 수정될 수 있습니다:
+
+```python
+from dataclasses import dataclass, field
+from typing import Set, Any
+from datetime import datetime
+
+@dataclass(frozen=True)
+class Option:
+    """Option for a Job in the SDK"""
+    name: str
+
+@dataclass(frozen=True)
+class Job:
+    """Job as value object"""
+    name: str
+    options: Set[Option]
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+@dataclass
+class Sdk:
+    """Sdk class with name, jobs, and creation date"""
+    name: str
+    jobs: Set[Job]
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+# ...
+
+# 새로운 집합을 사용하는 예
+job1 = Job(name="job_1", options={option1, option2})
+job2 = Job(name="job_2", options={option1})
+
+sdk = Sdk(name="sdk_1", jobs={job1, job2})
+```
+
+위의 코드에서 `Set` 타입 힌트를 사용하여 `Sdk` 클래스의 `jobs`와 `Job` 클래스의 `options`를 정의하였습니다.
