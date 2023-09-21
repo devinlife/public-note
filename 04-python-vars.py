@@ -1,3 +1,5 @@
+from icecream import ic
+
 class MyClass:
     def __init__(self, name, age):
         self.name = name
@@ -12,3 +14,7 @@ obj = MyClass("John", 30)
 print(obj.to_dict())  # {'name': 'John', 'age': 30}
 
 print(vars(obj))
+ic(obj)
+ic()
+ic(vars(obj))
+ic()
