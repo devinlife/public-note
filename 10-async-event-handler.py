@@ -62,7 +62,7 @@ event_handler.register("event2", sync_handler2)
 
 # Trigger events
 async def main():
-    await event_handler.handle_event("event1", "some_arg", key="value")
+    await 1event_handler.handle_event("event1", "some_arg", key="value")
     await event_handler.handle_event("event2")
 
 
