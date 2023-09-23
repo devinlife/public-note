@@ -1,6 +1,10 @@
+from mlspace_request import RequestData
+
+
 # GET vendor
 def handler_get_vendor(_):
-    print("get vendor!")
+    # vendor = "Qualcomm"
+    return RequestData(url="/v1/vendor", method="get", params=None, json_data=None)
 
 
 def add_parser_handler_get_vendor(subparsers):
@@ -11,7 +15,7 @@ def add_parser_handler_get_vendor(subparsers):
 # POST vendor
 def handler_post_vendor(args):
     vendor_name = args.vendor_name if args.vendor_name else "DefaultVendor"
-    print(f"post vendor with name: {vendor_name}")
+    return RequestData(url="/v1/vendor", method="post", params=None, json_data={"vendor": {vendor_name}})
 
 
 def add_parser_handler_post_vendor(subparsers):

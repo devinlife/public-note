@@ -1,6 +1,7 @@
 # main.py
 import argparse
 import handler_vendor
+import mlspace_client
 
 
 def main():
@@ -13,10 +14,13 @@ def main():
 
     args = parser.parse_args()
 
+    req = {}
     if hasattr(args, "func"):
-        args.func(args)
+        req = args.func(args)
     else:
         parser.print_help()
+
+    mlspace_client.request(req)
 
 
 if __name__ == "__main__":
