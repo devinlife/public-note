@@ -1,4 +1,5 @@
 # main.py
+from dataclasses import asdict
 import argparse
 import handler_vendor
 import mlspace_client
@@ -20,7 +21,7 @@ def main():
     else:
         parser.print_help()
 
-    mlspace_client.request(req)
+    mlspace_client.request(asdict(req))
 
 
 if __name__ == "__main__":
