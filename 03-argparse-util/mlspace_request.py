@@ -15,4 +15,4 @@ class RequestData:
     url: str
     action: ActionType
     params: dict | None
-    json_data: dict | None
+    json: dict | None
