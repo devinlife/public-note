@@ -671,3 +671,30 @@
     "url": "http://swagger.io"
   }
 }
+
+
+
+@startuml
+
+participant Backend
+participant Worker
+participant "Evaluator Container" as Evaluator
+participant "Sherlock Task" as Sherlock
+participant "S3 Storage" as S3
+
+Backend -> Worker: Evaluation 작업 전달
+Worker -> Evaluator: 구동 환경 준비
+Worker -> Evaluator: 실행
+Evaluator -> Evaluator: Execution 실행
+Evaluator -> Sherlock: Evaluation 작업 전달
+Evaluator -> Sherlock: 종료 polling
+Sherlock -> Sherlock: Test Script 실행
+Sherlock -> Backend: presigned URL 요청
+Sherlock -> S3: 실행 결과 업로드
+Sherlock --> Evaluator: 종료
+Evaluator -> Evaluator: measurment 실행
+Evaluator -> Backend: presigned URL 요청
+Evaluator -> S3: 실행 결과 아웃풋 파일 업로드
+Evaluator -> Backend: 실행 결과 전달
+
+@enduml
