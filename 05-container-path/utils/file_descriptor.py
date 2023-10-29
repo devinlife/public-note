@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class VolumeDescriptor:
+class PathDescriptor:
     relative_path: str
     base_path_local: str
     base_path_container: Optional[str] = None
@@ -23,12 +23,17 @@ class VolumeDescriptor:
 @dataclass
 class FileDescriptor:
     filename: str
-    volume: VolumeDescriptor
+    url: str
+    volume: PathDescriptor
 
-    def __init__(self, filepath: str, base_path_local: str, base_path_container: Optional[str] = None):
+    def __init__(self, filepath: str, url: str, base_path_local: str, base_path_container: Optional[str] = None):
+        if filepath.startswith("/"):
+            raise ValueError(f"filepath should be relative path: {filepath}")
+
         path_obj = Path(filepath)
         self.filename = path_obj.name
-        self.volume = VolumeDescriptor(
+        self.url = url
+        self.volume = PathDescriptor(
             relative_path=str(path_obj.parent), base_path_local=base_path_local, base_path_container=base_path_container
         )
 
@@ -53,12 +58,26 @@ class FileDescriptor:
         return None
 
 
+"""
 # 사용 예제
 file_info = FileDescriptor(
-    filepath="example.txt", base_path_local="/local_machaine/path", base_path_container="/container"
+    filepath="relpath/example.txt",
+    url="s3/workspace/id/example.txt",
+    base_path_local="/local_machaine/path",
+    base_path_container="/container",
 )
 
-print(file_info.local_filepath)  # 출력: /local_machaine/path/specific_path/example.txt
-print(file_info.local_path)  # 출력: /local_machaine/path/specific_path
-print(file_info.container_filepath)  # 출력: /container/specific_path/example.txt
-print(file_info.container_path)  # 출력: /container/specific_path
+print(file_info.local_filepath)
+print(file_info.local_path)  
+print(file_info.container_filepath) 
+print(file_info.container_path)  
+print(file_info.filename)
+print(file_info.url)
+
+/local_machaine/path/relpath/example.txt
+/local_machaine/path/relpath
+/container/relpath/example.txt
+/container/relpath
+example.txt
+s3/workspace/id/example.txt
+"""
