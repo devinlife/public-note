@@ -1,32 +1,33 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
 class PathDescriptor:
     relative_path: str
     base_path_local: str
-    base_path_container: Optional[str] = None
+    base_path_container: str | None = None
 
     @property
     def local_path(self) -> Path:
         return Path(self.base_path_local) / self.relative_path
 
     @property
-    def container_path(self) -> Optional[Path]:
+    def container_path(self) -> Path:
         if self.base_path_container:
             return Path(self.base_path_container) / self.relative_path
-        return None
+        raise ValueError(f"container_path is not defined: {self}")
 
 
 @dataclass
 class FileDescriptor:
     filename: str
-    url: str
     volume: PathDescriptor
+    url: str | None
 
-    def __init__(self, filepath: str, url: str, base_path_local: str, base_path_container: Optional[str] = None):
+    def __init__(
+        self, filepath: str, base_path_local: str, base_path_container: str | None = None, url: str | None = None
+    ):
         if filepath.startswith("/"):
             raise ValueError(f"filepath should be relative path: {filepath}")
 
@@ -42,20 +43,20 @@ class FileDescriptor:
         return self.volume.local_path / self.filename
 
     @property
-    def container_filepath(self) -> Optional[Path]:
+    def container_filepath(self) -> Path:
         if self.volume.container_path:
             return self.volume.container_path / self.filename
-        return None
+        raise ValueError(f"container_path is not defined: {self.volume}")
 
     @property
     def local_path(self) -> Path:
         return self.volume.local_path
 
     @property
-    def container_path(self) -> Optional[Path]:
+    def container_path(self) -> Path:
         if self.volume.container_path:
             return self.volume.container_path
-        return None
+        raise ValueError(f"container_path is not defined: {self.volume}")
 
 
 """

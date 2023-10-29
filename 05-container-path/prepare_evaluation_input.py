@@ -1,6 +1,6 @@
 import httpx
 from utils.download_file import download_file, download_files
-from utils.file_descriptor_generator import get_file_descriptor, get_file_descriptors
+from utils.file_descriptor_from_dto import create_file_descriptor_from_dto
 
 INPUT_MODEL_DIR_RELATIVE_PATH = "input_models"
 DATASET_DIR_RELATIVE_PATH = "dataset"
@@ -16,15 +16,17 @@ class PrepareEvaluationInputStep:
     ):
         try:
             print(f"workspace_id: {workspace_id}, workflow_id: {workflow_id}, job_id: {job_id}")
-            input_model_files = get_file_descriptors(input_models, base_dir_name, INPUT_MODEL_DIR_RELATIVE_PATH)
-            previous_output_model_files = get_file_descriptors(
+            input_model_files = create_file_descriptor_from_dto(
+                input_models, base_dir_name, INPUT_MODEL_DIR_RELATIVE_PATH
+            )
+            previous_output_model_files = create_file_descriptor_from_dto(
                 previous_output_models, base_dir_name, INPUT_MODEL_DIR_RELATIVE_PATH
             )
-            dataset_file = get_file_descriptor(dataset, base_dir_name, DATASET_DIR_RELATIVE_PATH)
+            dataset_file = create_file_descriptor_from_dto(dataset, base_dir_name, DATASET_DIR_RELATIVE_PATH)
 
             # FIXME: get this path form entrypoint
             script_relative_path = "script"
-            script_file = get_file_descriptor(dataset, base_dir_name, script_relative_path)
+            script_file = create_file_descriptor_from_dto(dataset, base_dir_name, script_relative_path)
 
             with httpx.Client() as client:
                 download_files(client, input_model_files)
