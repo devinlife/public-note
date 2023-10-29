@@ -24,9 +24,9 @@ class PrepareEvaluationInputStep:
             )
             dataset_file = create_file_descriptor_from_dto(dataset, base_dir_name, DATASET_DIR_RELATIVE_PATH)
 
-            # FIXME: get this path form entrypoint
+            # FIXME: get this path form entrypoint whihich is defined by user
             script_relative_path = "script"
-            script_file = create_file_descriptor_from_dto(dataset, base_dir_name, script_relative_path)
+            script_file = create_file_descriptor_from_dto(script, base_dir_name, script_relative_path)
 
             with httpx.Client() as client:
                 download_files(client, input_model_files)
